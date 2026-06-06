@@ -402,6 +402,19 @@
                     Soft SM <span class="text-neon-pink mx-2">×</span> 1:1 Hospitality</p>
                 <div class="w-16 h-[2px] bg-gradient-to-l from-transparent to-neon-cyan"></div>
             </div>
+
+            <!-- Access Counter -->
+            <div id="visitor-counter" class="fade-up mt-6 flex flex-col items-center gap-1" style="transition-delay: 0.55s;">
+                <span class="font-serif text-[9px] tracking-[0.45em] text-gray-500 uppercase">Visitors</span>
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-[1px] bg-gradient-to-r from-transparent to-neon-cyan/40"></div>
+                    <span id="visitor-count"
+                        class="font-mono text-base md:text-lg tracking-[0.25em] text-neon-cyan"
+                        style="text-shadow: 0 0 8px rgba(0,255,255,0.7), 0 0 20px rgba(0,255,255,0.3);"
+                    >···</span>
+                    <div class="w-8 h-[1px] bg-gradient-to-l from-transparent to-neon-cyan/40"></div>
+                </div>
+            </div>
             <div class="fade-up mt-24" style="transition-delay: 0.6s;">
                 <div class="flex flex-col items-center gap-2 animate-bounce opacity-70">
                     <span class="text-[10px] font-serif text-neon-cyan tracking-[0.4em]">SCROLL</span>
@@ -1054,6 +1067,40 @@
         }, { threshold: 0.5 }); // Activate when 50% visible
 
         sections.forEach(section => navObserver.observe(section));
+
+        // --- Access Counter ---
+        (async function initCounter() {
+            const countEl = document.getElementById('visitor-count');
+            if (!countEl) return;
+
+            try {
+                const res = await fetch('/api/count', { method: 'POST' });
+                if (!res.ok) throw new Error('API error');
+                const { count } = await res.json();
+
+                // カウントアップアニメーション
+                const duration = 1800;
+                const startTime = performance.now();
+                const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+
+                function animateCount(now) {
+                    const elapsed = now - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const current = Math.floor(easeOut(progress) * count);
+                    countEl.textContent = current.toLocaleString('ja-JP');
+                    if (progress < 1) {
+                        requestAnimationFrame(animateCount);
+                    } else {
+                        countEl.textContent = count.toLocaleString('ja-JP');
+                    }
+                }
+                requestAnimationFrame(animateCount);
+
+            } catch (e) {
+                // APIが未設定・エラーの場合はプレースホルダーを維持（要素は表示したまま）
+                countEl.textContent = '---';
+            }
+        })();
     </script>
 </body>
 
