@@ -1,4 +1,9 @@
-import { kv } from '@vercel/kv';
+import { Redis } from '@upstash/redis';
+
+const redis = new Redis({
+    url: process.env.UPSTASH_REDIS_REST_URL,
+    token: process.env.UPSTASH_REDIS_REST_TOKEN,
+});
 
 const COUNTER_KEY = 'choiem:page_visits';
 
@@ -16,19 +21,19 @@ export default async function handler(req, res) {
     try {
         if (req.method === 'POST') {
             // アクセスカウントをインクリメントして返す
-            const count = await kv.incr(COUNTER_KEY);
+            const count = await redis.incr(COUNTER_KEY);
             return res.status(200).json({ count });
         }
 
         if (req.method === 'GET') {
             // 現在のカウントを返す（インクリメントしない）
-            const count = (await kv.get(COUNTER_KEY)) || 0;
+            const count = (await redis.get(COUNTER_KEY)) || 0;
             return res.status(200).json({ count });
         }
 
         return res.status(405).json({ error: 'Method not allowed' });
     } catch (error) {
-        console.error('KV error:', error);
+        console.error('Redis error:', error);
         return res.status(500).json({ error: 'Internal server error' });
     }
 }
