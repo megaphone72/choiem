@@ -1,6 +1,8 @@
 {
-  "cleanUrls": true,
   "rewrites": [
-    { "source": "/api/count", "destination": "/api/count.js" }
+    {
+      "source": "/api/count",
+      "destination": "/api/count.js"
+    }
   ]
 }
