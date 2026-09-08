@@ -1,23 +1,9 @@
 {
-  "version": 2,
-  "builds": [
+  "outputDirectory": "choiem-project",
+  "rewrites": [
     {
-      "src": "api/*.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "choiem-project/**",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/$1.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/choiem-project/$1"
+      "source": "/api/count",
+      "destination": "/api/count.js"
     }
   ],
   "headers": [
