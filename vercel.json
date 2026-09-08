@@ -1,7 +1,25 @@
 {
   "version": 2,
-  "buildCommand": null,
-  "outputDirectory": "choiem-project",
+  "builds": [
+    {
+      "src": "api/*.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "choiem-project/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/choiem-project/$1"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
